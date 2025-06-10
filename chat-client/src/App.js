@@ -1,24 +1,31 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState, useEffect, useRef } from 'react';
+import { Header, MessageList, MessageInput } from "./components";
 
 function App() {
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState('');
+  const ws = useRef(null);
+
+  useEffect(() => {
+    ws.current = new WebSocket('ws://127.0.0.1:8000/ws');
+    ws.current.onmessage = (evt) => {
+      setMessages(prev => [...prev, evt.data]);
+    };
+    return () => ws.current.close();
+  }, []);
+
+  const sendMessage = () => {
+    if (!input) return;
+    ws.current.send(input);
+    setMessages(prev => [...prev, `You: ${input}`]);
+    setInput('');
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Header>
+      <MessageList messages={messages} />
+      <MessageInput input={input} setInput={setInput} sendMessage={sendMessage} />
+    </Header>
   );
 }
 
