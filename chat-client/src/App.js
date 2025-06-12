@@ -1,5 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { Header, MessageList, MessageInput } from "./components";
+import styled from "@emotion/styled";
+
+const Main = styled.div`
+  background: #10239e;
+  height: 100vh;
+  display: flex;
+`;
 
 function App() {
   const [messages, setMessages] = useState([]);
@@ -22,10 +29,12 @@ function App() {
   };
 
   return (
+    <Main>
     <Header>
       <MessageList messages={messages} />
       <MessageInput input={input} setInput={setInput} sendMessage={sendMessage} />
     </Header>
+    </Main>
   );
 }
 
